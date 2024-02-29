@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Movement : MonoBehaviour
+public class Player : MonoBehaviour
 {
     [SerializeField] private float linearVelocity = 20f;
     [SerializeField] private float angularVelocityVertical = -15f;
@@ -11,10 +11,29 @@ public class Movement : MonoBehaviour
     [SerializeField] private float clampRangeY = 7f;
 
     private PlayerInputReceiver inputs;
+    private LaserGun laserGun;
 
     private void Awake() {
         TryGetComponent(out inputs);
+        TryGetComponent(out laserGun);
     }
+    
+    private void Start() {
+        inputs.OnPlayerShootingStart += Inputs_OnPlayerShootingStart;
+        inputs.OnPlayerShootingStop += Inputs_OnPlayerShootingStop;
+    }
+
+    # region OnEventCall function declarations
+
+    private void Inputs_OnPlayerShootingStop(object sender, EventArgs e) {
+        laserGun.SetShootingTo(false);
+    }
+
+    private void Inputs_OnPlayerShootingStart(object sender, EventArgs e) {
+        laserGun.SetShootingTo(true);
+    }
+
+    # endregion
 
     private void Update() {
         HandleMovement();
@@ -52,5 +71,7 @@ public class Movement : MonoBehaviour
             transform.localPosition = new Vector3(clampedXDir, clampedYDir, 0);
         }
     }
+
+
 }
 
