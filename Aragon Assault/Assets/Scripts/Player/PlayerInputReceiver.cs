@@ -8,7 +8,7 @@ public class PlayerInputReceiver : MonoBehaviour
 
     public event EventHandler OnPlayerShootingStart;
     public event EventHandler OnPlayerShootingStop;
-
+    public event EventHandler OnPlayerBoost;
 
     private void Awake() {
         inputActions = new PlayerInputActions();
@@ -21,19 +21,22 @@ public class PlayerInputReceiver : MonoBehaviour
 
         inputActions.Player.Shoot.canceled += (InputAction.CallbackContext context ) => 
             OnPlayerShootingStop?.Invoke(this, EventArgs.Empty);
+
+        inputActions.Player.Boost.started += (InputAction.CallbackContext context) => 
+            OnPlayerBoost?.Invoke(this, EventArgs.Empty);
     }
 
     public float GetInputAxisHorizontal() {
-        return inputActions.Player.XMovement.ReadValue<float>();
+        return Input.GetAxis("Horizontal");
     }
 
     public float GetInputAxisVertical() {
-        return inputActions.Player.YMovement.ReadValue<float>();
+        return Input.GetAxis("Vertical");
     }
 
     private void EnableInputs() {
-        inputActions.Player.XMovement.Enable();
-        inputActions.Player.YMovement.Enable();
         inputActions.Player.Shoot.Enable();
+        inputActions.Player.Boost.Enable();
     }
+
 }
